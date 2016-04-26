@@ -29,9 +29,17 @@ public class MainActivity extends AppCompatActivity {
                 button.setId((iRow)*COLUMNS+(iCol+1));
                 button.setBackgroundColor(Color.BLACK);
                 button.setOnClickListener(new View.OnClickListener() {
-                    boolean flg = false;
+                    boolean flg;
                     @Override
                     public void onClick(View v) {
+                        flg = isAlive[v.getId()];
+                        if(!flg){
+                            v.setBackgroundColor(Color.GREEN);
+                        }else{
+                            v.setBackgroundColor(Color.BLACK);
+                        }
+                        isAlive[v.getId()] = !flg;
+                        /*
                         if(!flg){
                             v.setBackgroundColor(Color.GREEN);
                             flg = true;
@@ -40,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
                             flg = false;
                         }
                         Log.d("No.",String.valueOf(v.getId()));
-
+                        */
+                        Log.d(String.valueOf(v.getId()),isAlive[v.getId()]?"true":"false");
                     }
                 });
                 tableRow.addView(button);
