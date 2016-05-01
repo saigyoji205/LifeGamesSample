@@ -5,14 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int ROWS = 15;
-    private static final int COLUMNS = 10;
+    private static final int ROWS = 100;
+    private static final int COLUMNS = 100;
     private boolean[]isAlive = new boolean[ROWS*COLUMNS];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,16 @@ public class MainActivity extends AppCompatActivity {
         TableLayout tableLayout = (TableLayout) findViewById(R.id.TableLayout);
         Button button;
 
+        TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams( //追加箇所
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1.0f
+        );
+        TableRow.LayoutParams cellLp = new TableRow.LayoutParams( //追加箇所
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                1.0f
+        );
 
         for(int iRow = 0; iRow < ROWS; iRow++){
             TableRow tableRow = new TableRow(this);
@@ -52,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(String.valueOf(v.getId()),isAlive[v.getId()]?"true":"false");
                     }
                 });
-                tableRow.addView(button);
+                tableRow.addView(button,cellLp); //変更箇所
             }
-            tableLayout.addView(tableRow);
+            tableLayout.addView(tableRow,rowLp); //変更箇所
         }
 
 /* 動的ボタン生成(配列あり)
