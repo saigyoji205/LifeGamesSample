@@ -6,96 +6,62 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int ROWS = 100;
-    private static final int COLUMNS = 100;
-    private boolean[]isAlive = new boolean[ROWS*COLUMNS];
+    private static final int COLUMNS = 40;
+    private boolean[] isAlive;
+    private TableLayout mTableLayout;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.life);
-        TableLayout tableLayout = (TableLayout) findViewById(R.id.TableLayout);
-        Button button;
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mTableLayout= (TableLayout) findViewById(R.id.TableLayout);
+        final int width = mTableLayout.getWidth();
+        final int height = mTableLayout.getHeight();
+        final int cellSize = (int) ((double) width / (double) COLUMNS);
+        final int rows = height / cellSize;
+        isAlive = new boolean[rows * COLUMNS];
+        Button[] button = new Button[rows * COLUMNS];
+        doDraw(cellSize, rows, button);
+    }
 
-        TableLayout.LayoutParams rowLp = new TableLayout.LayoutParams( //追加箇所
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1.0f
-        );
-        TableRow.LayoutParams cellLp = new TableRow.LayoutParams( //追加箇所
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                1.0f
-        );
-
-        for(int iRow = 0; iRow < ROWS; iRow++){
+    private void doDraw(int cellSize, int rows, Button[] button) {
+        final TableLayout tableLayout = mTableLayout;
+        for (int iRow = 0; iRow < rows; iRow++) {
             TableRow tableRow = new TableRow(this);
-            for(int iCol = 0; iCol < COLUMNS; iCol++){
-                button = new Button(this);
-                button.setId((iRow)*COLUMNS+(iCol+1));
-                button.setBackgroundColor(Color.BLACK);
-                button.setOnClickListener(new View.OnClickListener() {
+            for (int iCol = 0; iCol < COLUMNS; iCol++) {
+                button[(iRow) * COLUMNS + (iCol)] = new Button(this);
+                button[(iRow) * COLUMNS + (iCol)].setBackgroundColor(Color.BLACK);
+                button[(iRow) * COLUMNS + (iCol)].setId((iRow) * COLUMNS + (iCol));
+                button[(iRow) * COLUMNS + (iCol)].setOnClickListener(new View.OnClickListener() {
                     boolean flg;
                     @Override
                     public void onClick(View v) {
                         flg = isAlive[v.getId()];
-                        if(!flg){
+                        if (!flg) {
                             v.setBackgroundColor(Color.GREEN);
-                        }else{
+                        } else {
                             v.setBackgroundColor(Color.BLACK);
                         }
                         isAlive[v.getId()] = !flg;
-                        /*
-                        if(!flg){
-                            v.setBackgroundColor(Color.GREEN);
-                            flg = true;
-                        }else{
-                            v.setBackgroundColor(Color.BLACK);
-                            flg = false;
-                        }
-                        Log.d("No.",String.valueOf(v.getId()));
-                        */
-                        Log.d(String.valueOf(v.getId()),isAlive[v.getId()]?"true":"false");
+                        Log.d(String.valueOf(v.getId()), isAlive[v.getId()] ? "true" : "false");
                     }
                 });
-                tableRow.addView(button,cellLp); //変更箇所
+                tableRow.addView(button[(iRow) * COLUMNS + (iCol)], cellSize, cellSize); //変更箇所
             }
-            tableLayout.addView(tableRow,rowLp); //変更箇所
+            tableLayout.addView(tableRow); //変更箇所
         }
+    }
 
-/* 動的ボタン生成(配列あり)
-        Button[][] buttons= new Button[ROWS][COLUMNS];
-        for(int iRow = 0; iRow < ROWS; iRow++){
-            TableRow tableRow = new TableRow(this);
-            for (int iCol = 0; iCol < COLUMNS; iCol++){
-                buttons[iRow][iCol] = new Button(this);
-                buttons[iRow][iCol].setId((iRow)*COLUMNS+(iCol+1));
-                buttons[iRow][iCol].setBackgroundColor(Color.BLACK);
-                buttons[iRow][iCol].setOnClickListener(new View.OnClickListener() {
-                    boolean flg = false;
-                    @Override
-                    public void onClick(View v) {
-                        if(!flg){
-                            v.setBackgroundColor(Color.GREEN);
-                            flg = true;
-                        }else{
-                            v.setBackgroundColor(Color.BLACK);
-                            flg = false;
-                        }
-                        Log.d("No.",String.valueOf(v.getId()));
-                    }
-                });
-                tableRow.addView(buttons[iRow][iCol]);
-            }
-            tableLayout.addView(tableRow);
-        }
-*/
-
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.life);
     }
 }
